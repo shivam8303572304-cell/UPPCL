@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meter Connect Utility</title>
+  <style>
+    :root {
+      --primary: #0056b3;
+      --bg: #f4f7f6;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --danger: #dc3545;
+      --success: #28a745;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .header {
+      background-color: var(--primary);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h2, h3 { margin-top: 0; color: var(--primary); }
+    .form-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    input[type="text"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      flex: 1;
+    }
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { opacity: 0.9; }
+    
+    /* Disconnect & Connect Action Buttons */
+    .btn-disconnect {
+      background-color: var(--danger);
+    }
+    .btn-reconnect {
+      background-color: var(--success);
+    }
+    .action-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th { background-color: #f0f0f0; }
+    .divider {
+      text-align: center;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header Section -->
+  <div class="header">
+    <h2>Meter Connect</h2>
+    <div>Token Expiry: <span id="token-expiry">--:--</span></div>
+  </div>
+
+  <!-- Input Form -->
+  <div class="card">
+    <h3>Get Meter Details</h3>
+    <div class="form-group">
+      <input type="text" id="account-id" placeholder="Enter Account ID">
+      <button onclick="fetchData()">Submit</button>
+    </div>
+    <div class="divider">OR</div>
+    <div class="form-group">
+      <input type="text" id="meter-no" placeholder="Enter Meter Number">
+      <button onclick="fetchData()">Submit</button>
+    </div>
+  </div>
+
+  <!-- Meter Remote Action (Disconnect / Connect) -->
+  <div class="card">
+    <h3>Remote Control (RCDC Actions)</h3>
+    <p style="margin-bottom: 10px; font-size: 14px; color: #666;">
+      Select an action to trigger remote meter operations:
+    </p>
+    <div class="action-container">
+      <button class="btn-disconnect" onclick="triggerAction('DISCONNECT')">Disconnect Meter</button>
+      <button class="btn-reconnect" onclick="triggerAction('RECONNECT')">Reconnect Meter</button>
+    </div>
+  </div>
+
+  <!-- Consumer Info -->
+  <div class="card">
+    <h3>Consumer Info</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Consumer</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Address</th>
+        </tr>
+      </thead>
+      <tbody id="consumer-table">
+        <tr><td colspan="4" style="text-align:center;">No data available</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Meter Info -->
+  <div class="card">
+    <h3>Meter Info</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Meter</th>
+          <th>Device</th>
+          <th>Rating</th>
+          <th>First</th>
+          <th>Last</th>
+        </tr>
+      </thead>
+      <tbody id="meter-table">
+        <tr><td colspan="5" style="text-align:center;">No data available</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Balance Info -->
+  <div class="card">
+    <h3>Balance Info</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Balance</th>
+          <th>Last Recharge</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="balance-table">
+        <tr><td colspan="5" style="text-align:center;">No data available</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RCDC Job History -->
+  <div class="card">
+    <h3>RCDC Job History</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Status</th>
+          <th>Created Date</th>
+          <th>Completion Date</th>
+        </tr>
+      </thead>
+      <tbody id="rcdc-table">
+        <tr><td colspan="4" style="text-align:center;">No data available</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  function fetchData() {
+    alert("Backend API connection is required to fetch real data.");
+  }
+
+  function triggerAction(actionType) {
+    const accId = document.getElementById('account-id').value;
+    const meterNo = document.getElementById('meter-no').value;
+
+    if (!accId && !meterNo) {
+      alert("Please enter Account ID or Meter Number first.");
+      return;
+    }
+
+    const confirmAction = confirm(`Are you sure you want to perform: ${actionType}?`);
+    if (confirmAction) {
+      alert(`${actionType} command initiated for meter/account.`);
+      // यहाँ पर Disconnect/Reconnect API कॉल की जा सकती है
+    }
+  }
+</script>
+
+</body>
+</html>
